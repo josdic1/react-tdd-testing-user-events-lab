@@ -1,7 +1,75 @@
 import { render, screen } from "@testing-library/react";
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 
 import App from "../App";
+
+
+test("the form includes text inputs for name and email address", () => {
+  render(<App />);
+
+  const nameInput = screen.getByLabelText(/name/i);
+  const emailInput = screen.getByLabelText(/email/i);
+
+  expect(nameInput).toBeInTheDocument();
+  expect(emailInput).toBeInTheDocument();
+});
+
+test("renders all checkboxes and they are initially unchecked", () => {
+  render(<App />);
+
+  const interests = ["art", "burgers", "cars", "dancing"];
+
+  interests.forEach((interest) => {
+    const checkbox = screen.getByRole("checkbox", { name: new RegExp(interest, "i") });
+    expect(checkbox).toBeInTheDocument();
+    expect(checkbox).not.toBeChecked();
+  });
+});
+
+test("typing in name and email fields updates their value", () => {
+  render(<App />);
+
+  const nameInput = screen.getByPlaceholderText(/name/i);
+  const emailInput = screen.getByPlaceholderText(/email/i);
+
+  userEvent.type(nameInput, "Josh");
+  userEvent.type(emailInput, "josh@example.com");
+
+  expect(nameInput).toHaveValue("Josh");
+  expect(emailInput).toHaveValue("josh@example.com");
+});
+
+test("clicking checkboxes toggles their state", () => {
+  render(<App />);
+
+  const artCheckbox = screen.getByRole("checkbox", { name: /art/i });
+  expect(artCheckbox).not.toBeChecked();
+
+  userEvent.click(artCheckbox);
+  expect(artCheckbox).toBeChecked();
+
+  userEvent.click(artCheckbox);
+  expect(artCheckbox).not.toBeChecked();
+});
+
+test("submitting form displays thank-you message with name and interests", () => {
+  render(<App />);
+
+  const nameInput = screen.getByPlaceholderText(/name/i);
+  const emailInput = screen.getByPlaceholderText(/email/i);
+  const burgersCheckbox = screen.getByRole("checkbox", { name: /burgers/i });
+  const submitButton = screen.getByRole("button", { name: /submit/i });
+
+  userEvent.type(nameInput, "Josh");
+  userEvent.type(emailInput, "josh@example.com");
+  userEvent.click(burgersCheckbox);
+  userEvent.click(submitButton);
+
+  expect(screen.getByText(/thank you for signing up, josh/i)).toBeInTheDocument();
+  expect(screen.getByText(/burgers/i)).toBeInTheDocument();
+});
+
 
 // Portfolio Elements
 test("displays a top-level heading with the text `Hi, I'm _______`", () => {

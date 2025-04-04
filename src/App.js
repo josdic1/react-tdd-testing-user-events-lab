@@ -1,3 +1,5 @@
+import Form from "./Form";
+
 function App() {
   return (
     <main>
@@ -18,6 +20,10 @@ function App() {
         <a href="https://github.com">GitHub</a>
         <a href="https://linkedin.com">LinkedIn</a>
       </div>
+      <section id="newsletter">
+        <Form />
+        
+      </section>
     </main>
   );
 }
